@@ -1,0 +1,15 @@
+
+---
+
+### 🛑 `.gitignore`
+
+```gitignore
+__pycache__/
+*.pyc
+.env
+.venv/
+*.log
+*.sqlite3
+.mypy_cache/
+.vscode/
+.idea/

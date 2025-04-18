@@ -1,0 +1,12 @@
+Metadata-Version: 2.4
+Name: bach-ai
+Version: 0.1.0
+Summary: Modular AI control system with niche discovery and website generation
+Requires-Python: >=3.10
+Requires-Dist: fastapi
+Requires-Dist: uvicorn[standard]
+Requires-Dist: pydantic>=2.0.0
+Requires-Dist: httpx
+Requires-Dist: python-jose[cryptography]
+Requires-Dist: email-validator
+Requires-Dist: datamodel-code-generator

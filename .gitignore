@@ -1,0 +1,21 @@
+import os
+
+# Define the project root directory
+project_root = r"C:\bach\empire"  # Use raw string to handle backslashes
+
+# Define the .gitignore content
+gitignore = """\
+pycache/
+*.pyc
+.env
+.venv/
+*.log
+*.sqlite3
+.mypy_cache/
+.vscode/
+.idea/
+"""
+
+# Write the .gitignore file
+with open(os.path.join(project_root, ".gitignore"), "w") as f:
+    f.write(gitignore.strip())

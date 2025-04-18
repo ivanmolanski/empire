@@ -1,0 +1,14 @@
+[project]
+name = "bach-ai"
+version = "0.1.0"
+description = "Modular AI control system with niche discovery and website generation"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "pydantic>=2.0.0",
+    "httpx",
+    "python-jose[cryptography]",
+    "email-validator",
+    "datamodel-code-generator"
+]

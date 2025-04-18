@@ -1,0 +1,337 @@
+openapi: 3.1.0
+info:
+  title: Bach AI Control API
+  version: 1.1.0
+servers:
+  - url: http://localhost:8000
+paths:
+  # --- Existing endpoints omitted for brevity (keep as-is) ---
+
+  # --- User Management ---
+  /user/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegisterRequest'
+      responses:
+        '201':
+          description: User registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Registration error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /user/login:
+    post:
+      summary: User login (returns JWT)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # --- Project Management ---
+  /project:
+    post:
+      summary: Create a new project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectCreateRequest'
+      responses:
+        '201':
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
+    get:
+      summary: List all projects for the current user
+      responses:
+        '200':
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectListResponse'
+  /project/{project_id}:
+    get:
+      summary: Get project details
+      parameters:
+        - in: path
+          name: project_id
+          schema:
+            type: string
+          required: true
+          description: Project identifier
+      responses:
+        '200':
+          description: Project details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete a project
+      parameters:
+        - in: path
+          name: project_id
+          schema:
+            type: string
+          required: true
+          description: Project identifier
+      responses:
+        '204':
+          description: Project deleted
+
+  # --- Async Task Tracking ---
+  /task/status:
+    get:
+      summary: Get the status of a background task
+      parameters:
+        - in: query
+          name: task_id
+          schema:
+            type: string
+          required: true
+          description: Task identifier
+      responses:
+        '200':
+          description: Task status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskStatusResponse'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # --- Webhooks/Events ---
+  /webhook/register:
+    post:
+      summary: Register a webhook for events
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookRegisterRequest'
+      responses:
+        '201':
+          description: Webhook registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookResponse'
+        '400':
+          description: Registration error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # --- Analytics/Monetization ---
+  /website/analytics:
+    get:
+      summary: Get analytics for a website
+      parameters:
+        - in: query
+          name: website_id
+          schema:
+            type: string
+          required: true
+          description: Website identifier
+      responses:
+        '200':
+          description: Website analytics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebsiteAnalyticsResponse'
+        '404':
+          description: Website not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /website/monetization:
+    get:
+      summary: Get monetization data for a website
+      parameters:
+        - in: query
+          name: website_id
+          schema:
+            type: string
+          required: true
+          description: Website identifier
+      responses:
+        '200':
+          description: Website monetization data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebsiteMonetizationResponse'
+        '404':
+          description: Website not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    # --- Existing schemas omitted for brevity (keep as-is) ---
+    UserRegisterRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required: [username, email, password]
+    UserLoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required: [username, password]
+    UserResponse:
+      type: object
+      properties:
+        user_id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+      required: [user_id, username, email]
+    LoginResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+      required: [access_token, token_type]
+    ProjectCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+      required: [name]
+    ProjectResponse:
+      type: object
+      properties:
+        project_id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+      required: [project_id, name]
+    ProjectListResponse:
+      type: object
+      properties:
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectResponse'
+      required: [projects]
+    TaskStatusResponse:
+      type: object
+      properties:
+        task_id:
+          type: string
+        status:
+          type: string
+        result:
+          type: string
+      required: [task_id, status]
+    WebhookRegisterRequest:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+        event:
+          type: string
+      required: [url, event]
+    WebhookResponse:
+      type: object
+      properties:
+        webhook_id:
+          type: string
+        url:
+          type: string
+          format: uri
+        event:
+          type: string
+      required: [webhook_id, url, event]
+    WebsiteAnalyticsResponse:
+      type: object
+      properties:
+        website_id:
+          type: string
+        visits:
+          type: integer
+        bounce_rate:
+          type: number
+        avg_time_on_site:
+          type: number
+      required: [website_id, visits, bounce_rate, avg_time_on_site]
+    WebsiteMonetizationResponse:
+      type: object
+      properties:
+        website_id:
+          type: string
+        revenue:
+          type: number
+        currency:
+          type: string
+        sources:
+          type: array
+          items:
+            type: string
+      required: [website_id, revenue, currency, sources]
+    # --- Keep all previous schemas here ---
