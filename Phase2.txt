@@ -1,6 +1,4 @@
-next.
 
------
 Want Me to Auto-Patch Your Routes with Model Imports?
 If you upload models.py and want me to go through each of:
 
