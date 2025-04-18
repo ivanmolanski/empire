@@ -12,3 +12,6 @@ dependencies = [
     "email-validator",
     "datamodel-code-generator"
 ]
+
+[tool.setuptools.packages.find]
+where = ["app", "routes"]

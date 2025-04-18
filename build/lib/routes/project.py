@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Path
-from models import ProjectCreateRequest, ProjectResponse, ProjectListResponse
+from app.models import ProjectCreateRequest, ProjectResponse, ProjectListResponse
 
 router = APIRouter()
 

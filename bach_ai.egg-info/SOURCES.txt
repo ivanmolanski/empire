@@ -1,6 +1,16 @@
 README.md
 main.py
 pyproject.toml
+app/routes/__init__.py
+app/routes/analytics.py
+app/routes/api.py
+app/routes/llm.py
+app/routes/niche.py
+app/routes/project.py
+app/routes/task.py
+app/routes/user.py
+app/routes/webhook.py
+app/routes/website.py
 bach_ai.egg-info/PKG-INFO
 bach_ai.egg-info/SOURCES.txt
 bach_ai.egg-info/dependency_links.txt

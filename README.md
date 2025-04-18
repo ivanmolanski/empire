@@ -1,4 +1,4 @@
-# Bach Empire AI
+# Bach Empire AI App
 
 A modular, production-grade FastAPI system for scalable AI-powered niche discovery, website generation, analytics, and automation.
 
@@ -16,7 +16,7 @@ A modular, production-grade FastAPI system for scalable AI-powered niche discove
 
 1. Install dependencies:
    ```
-   uv pip install .
+   uv pip install -r requirements.txt
    ```
 
 2. Generate models from OpenAPI YAML (if needed):
@@ -26,38 +26,41 @@ A modular, production-grade FastAPI system for scalable AI-powered niche discove
 
 3. Run the API:
    ```
-   uvicorn main:app --reload
+   uvicorn app.main:app --reload
    ```
 
-4. Visit [http://localhost:8000/docs](http://localhost:8000/docs) for interactive API docs.
+4. Start the RQ worker (for background jobs):
+   ```
+   python worker.py
+   ```
+
+5. Visit [http://localhost:8000/docs](http://localhost:8000/docs) for interactive API docs.
 
 ## Project Structure
 
 ```
 empire/
-├── main.py
-├── models.py
+├── app/
+│   ├── main.py
+│   ├── models.py
+│   ├── routes/
+│   │   ├── api.py
+│   │   ├── user.py
+│   │   ├── project.py
+│   │   ├── task.py
+│   │   ├── webhook.py
+│   │   ├── analytics.py
+│   │   ├── llm.py
+│   │   ├── niche.py
+│   │   └── website.py
+│   ├── config.py
+│   ├── db.py
+│   ├── auth.py
+│   └── services/
+├── worker.py
+├── .env
+├── requirements.txt
 ├── openapi.yaml
-├── routes/
-│   ├── __init__.py
-│   ├── api.py
-│   ├── llm.py
-│   ├── niche.py
-│   ├── website.py
-│   ├── user.py
-│   ├── project.py
-│   ├── task.py
-│   ├── webhook.py
-│   └── analytics.py
-├── memory-bank/
-│   ├── projectbrief.md
-│   ├── productContext.md
-│   ├── systemPatterns.md
-│   ├── techContext.md
-│   ├── activeContext.md
-│   └── progress.md
-├── pyproject.toml
-├── .gitignore
 └── README.md
 ```
 
