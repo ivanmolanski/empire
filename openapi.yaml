@@ -211,6 +211,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /llm/switch-provider:
+    post:
+      summary: Switch the LLM provider
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LLMProviderSwitchRequest'
+      responses:
+        '200':
+          description: Provider switched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
 components:
   schemas:
@@ -334,4 +362,23 @@ components:
           items:
             type: string
       required: [website_id, revenue, currency, sources]
+    LLMProviderSwitchRequest:
+      type: object
+      properties:
+        provider:
+          type: string
+        api_key:
+          type: string
+      required: [provider, api_key]
+    MessageResponse:
+      type: object
+      properties:
+        message_id:
+          type: string
+        content:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+      required: [message_id, content, timestamp]
     # --- Keep all previous schemas here ---
