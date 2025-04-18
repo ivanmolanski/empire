@@ -1,14 +1,5 @@
 from fastapi import APIRouter, status, Query
-from app.models import (
-    WebsiteCreationRequest,
-    WebsiteCreationResponse,
-    WebsiteMimicRequest,
-    WebsiteIdentifierRequest,
-    WebsiteViewResponse,
-    WebsiteStatusResponse,
-    MessageResponse,
-    ErrorResponse
-)
+from app.models import WebsiteCreationRequest, WebsiteCreationResponse, WebsiteMimicRequest, WebsiteIdentifierRequest, WebsiteViewResponse, WebsiteStatusResponse, MessageResponse, ErrorResponse
 
 router = APIRouter()
 

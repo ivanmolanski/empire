@@ -1,10 +1,5 @@
 from fastapi import APIRouter, status
-from app.models import (
-    NicheDiscoveryRequest,
-    NicheDiscoveryResponse,
-    DailyNicheReportResponse,
-    ErrorResponse
-)
+from app.models import NicheDiscoveryRequest, NicheDiscoveryResponse, DailyNicheReportResponse, ErrorResponse
 
 router = APIRouter()
 

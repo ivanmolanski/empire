@@ -10,7 +10,7 @@ dependencies = [
     "httpx",
     "python-jose[cryptography]",
     "email-validator",
-    "datamodel-code-generator"
+    "datamodel-code-generator",
 ]
 
 [tool.setuptools.packages.find]
