@@ -4,16 +4,16 @@ A sophisticated, production-grade AI multi-agent system that combines Google's A
 
 <div align="center">
 
-![Empire Framework](https://img.shields.io/badge/Empire-Framework-blue)
-![Google ADK](https://img.shields.io/badge/Powered%20by-Google%20ADK-4285F4)
-![Pydantic v2](https://img.shields.io/badge/Pydantic-v2-E92063)
-![FastAPI](https://img.shields.io/badge/FastAPI-Latest-009688)
-![MCP](https://img.shields.io/badge/Model%20Context-Protocol-674EA7)
+[![Empire Framework](https://img.shields.io/badge/Empire-Framework-blue)](https://github.com/ivanmolanski/empire)
+[![Google ADK](https://img.shields.io/badge/Powered%20by-Google%20ADK-4285F4)](https://google.github.io/adk-docs/)
+[![Pydantic v2](https://img.shields.io/badge/Pydantic-v2-E92063)](https://github.com/pydantic/pydantic)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Latest-009688)](https://github.com/koxudaxi/fastapi-code-generator/tree/master)
+[![MCP](https://img.shields.io/badge/Model%20Context-Protocol-674EA7)](https://github.com/modelcontextprotocol/)
 
-**[User Manual](docs/user_manual.md)** | 
-**[System Architecture](docs/architecture.md)** | 
-**[API Reference](http://localhost:8000/docs)** | 
-**[Monitoring](http://localhost:8000/monitoring/dashboard)**
+**[User Manual](https://github.com/ivanmolanski/empire/blob/main/docs/user_manual.md)** | 
+**[System Architecture](https://github.com/ivanmolanski/empire/blob/main/docs/architecture.md)** | 
+**[API Documentation](https://github.com/ivanmolanski/empire/blob/main/openapi.yaml)** | 
+**[GitHub Project](https://github.com/ivanmolanski/empire)**
 
 </div>
 
@@ -82,9 +82,9 @@ The system should demonstrate 112% improved workflow efficiency after 7 operatio
    python tools/mcp_manager.py start
    ```
 
-6. **Access the interactive API documentation**:
-   - API Docs: [http://localhost:8000/docs](http://localhost:8000/docs)
-   - Monitoring Dashboard: [http://localhost:8000/monitoring/dashboard](http://localhost:8000/monitoring/dashboard)
+6. **Access the interactive API documentation** (available after starting the local server):
+   - API Docs: Available at `http://localhost:8000/docs` when running locally
+   - Monitoring Dashboard: Available at `http://localhost:8000/monitoring/dashboard` when running locally
 
 ## Postmortem Structure
 
