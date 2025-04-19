@@ -5,6 +5,19 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+from google.adk.agents import BaseAgent
+from typing import AsyncGenerator
+from google.adk.events import Event
+from google.adk.agents.invocation_context import InvocationContext
+
+class WebsiteManagementAgent(BaseAgent):
+    async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
+        user_input = ctx.session.state.get("user_input", "")
+        response = run_website_management_task(user_input)
+        yield Event(author=self.name, content=response)
+
+website_agent = WebsiteManagementAgent(name="WebsiteManagementAgent")
+
 def run_website_management_task(user_input: str):
     """Runs the website management task using LLMs with fallback."""
     response = None

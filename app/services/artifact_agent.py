@@ -8,3 +8,5 @@ class ArtifactAgent(BaseAgent):
     async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
         # Placeholder: Add logic to save/load artifacts using ADK artifact service
         yield Event(author=self.name, content="Artifact management complete.")
+
+artifact_agent = ArtifactAgent(name="ArtifactAgent")

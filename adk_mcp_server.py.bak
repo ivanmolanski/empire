@@ -8,7 +8,8 @@ from mcp import types as mcp_types
 from mcp.server.lowlevel import Server, NotificationOptions
 from mcp.server.models import InitializationOptions
 import mcp.server.stdio
-from app.core.function_tool import FunctionTool
+from google.adk.tools.function_tool import FunctionTool
+from google.adk.tools.mcp_tool.conversion_utils import adk_to_mcp_tool_type
 from app.services.command_agent import CommandAgent as command_agent
 from app.services.pmo_agent import pmo_agent
 from app.services.fastapi_mcp_tools import get_fastapi_mcp_tools
@@ -41,17 +42,9 @@ except Exception as e:
 # Load environment variables (for agent credentials, etc.)
 load_dotenv()
 
-# Create basic MCP tool type conversion
-def tool_to_mcp_type(tool):
-    return mcp_types.Tool(
-        name=tool.name,
-        description=tool.description,
-        parameters={}
-    )
-
 # Wrap CommandAgent and PMOAgent as FunctionTools
-command_tool = FunctionTool(command_agent.run_async, name="CommandAgent")
-pmo_tool = FunctionTool(pmo_agent.run_async, name="PMOAgent")
+command_tool = FunctionTool(command_agent.run_async)
+pmo_tool = FunctionTool(pmo_agent.run_async)
 
 # Import all specialized agents to expose as tools
 from app.services.analytics_agent import analytics_agent
@@ -68,28 +61,28 @@ from app.services.seo_agent import SEOAgent
 from app.services.website_agent import website_agent
 
 # Instantiate any class-based agents
-error_handler_tool = FunctionTool(ErrorHandlerAgent(name="ErrorHandlerAgent").run_async, name="ErrorHandlerAgent")
-human_in_loop_tool = FunctionTool(HumanInLoopAgent(name="HumanInLoopAgent").run_async, name="HumanInLoopAgent")
-memory_tool = FunctionTool(MemoryAgent(name="MemoryAgent").run_async, name="MemoryAgent")
-review_tool = FunctionTool(ReviewAgent(name="ReviewAgent").run_async, name="ReviewAgent")
-artifact_tool = FunctionTool(artifact_agent.run_async, name="ArtifactAgent") if hasattr(artifact_agent, 'run_async') else None
+error_handler_tool = FunctionTool(ErrorHandlerAgent(name="ErrorHandlerAgent").run_async)
+human_in_loop_tool = FunctionTool(HumanInLoopAgent(name="HumanInLoopAgent").run_async)
+memory_tool = FunctionTool(MemoryAgent(name="MemoryAgent").run_async)
+review_tool = FunctionTool(ReviewAgent(name="ReviewAgent").run_async)
+artifact_tool = FunctionTool(artifact_agent.run_async) if hasattr(artifact_agent, 'run_async') else None
 
 # Add all agent tools to the exposed_tools list
 exposed_tools = [
     command_tool,
     pmo_tool,
-    FunctionTool(analytics_agent.run_async, name="AnalyticsAgent"),
+    FunctionTool(analytics_agent.run_async),
     artifact_tool,
-    FunctionTool(AutoCoderAgent.run_async, name="AutoCoderAgent"),
+    FunctionTool(AutoCoderAgent.run_async),
     error_handler_tool,
     human_in_loop_tool,
-    FunctionTool(llm_switch_agent.run_async, name="LLMSwitchAgent"),
+    FunctionTool(llm_switch_agent.run_async),
     memory_tool,
-    FunctionTool(discovery_agent.run_async, name="DiscoveryAgent"),
+    FunctionTool(discovery_agent.run_async),
     review_tool,
-    FunctionTool(ScraperAgent.run_async, name="ScraperAgent"),
-    FunctionTool(SEOAgent.run_async, name="SEOAgent"),
-    FunctionTool(website_agent.run_async, name="WebsiteAgent")
+    FunctionTool(ScraperAgent.run_async),
+    FunctionTool(SEOAgent.run_async),
+    FunctionTool(website_agent.run_async)
 ]
 # Remove any None values (e.g., if artifact_tool is None)
 exposed_tools = [tool for tool in exposed_tools if tool is not None]
@@ -103,12 +96,12 @@ server = Server(name="EmpireMCPServer")
 
 @server.list_tools()
 async def list_tools():
-    """Advertise all tools as MCP tools."""
+    """Advertise all ADK tools as MCP tools."""
     logger.info(f"Listing {len(exposed_tools)} available tools")
     mcp_tools = []
     for tool in exposed_tools:
         try:
-            mcp_tool = tool_to_mcp_type(tool)
+            mcp_tool = adk_to_mcp_tool_type(tool)
             mcp_tools.append(mcp_tool)
         except Exception as e:
             logger.error(f"Error converting tool {tool.name} to MCP format: {str(e)}")

@@ -23,9 +23,13 @@ class NicheDiscoveryRequest(BaseModel):
     duration: int
 
 class DailyNicheReportResponse(BaseModel):
-    date: str
-    niche: str
-    performance: dict
+    report: List[dict] = [
+        {
+            "niche": str,
+            "monetization": str, 
+            "details": str
+        }
+    ]
 
 class WebsiteCreationRequest(BaseModel):
     domain: str

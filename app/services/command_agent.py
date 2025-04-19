@@ -5,6 +5,8 @@ from typing import AsyncGenerator
 
 class CommandAgent(BaseAgent):
     """Agent that lists available commands and helps the user via chat."""
+    available_agents: list = []
+    
     def __init__(self, available_agents):
         super().__init__(name="CommandAgent", description="Lists and helps with available agent commands.")
         self.available_agents = available_agents

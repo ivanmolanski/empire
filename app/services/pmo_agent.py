@@ -47,10 +47,12 @@ main_workflow = SequentialAgent(
 
 # PMO/master agent with all sub-agents and tools
 class PMOAgent(BaseAgent):
+    sub_agents: list = []
+    tools: list = []
+    
     def __init__(self):
         super().__init__(name="PMOAgent", description="Master agent orchestrating all sub-agents and workflows.")
         self.sub_agents = [main_workflow]
-        # Example: Add explicit tools (AgentTool) if needed
         self.tools = [agent_tool.AgentTool(agent=website_agent)]
         for agent in self.sub_agents:
             agent.parent_agent = self
