@@ -1,8 +1,14 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, Literal
 
 class ErrorResponse(BaseModel):
     error: str
+
+class MessageResponse(BaseModel):
+    message: str
+
+class LLMProviderSwitchRequest(BaseModel):
+    provider: Literal["openrouter", "gemini"]
 
 class NicheDiscoveryResponse(BaseModel):
     success: bool
@@ -106,9 +112,3 @@ class WebhookResponse(BaseModel):
     id: int
     url: str
     event: str
-
-class LLMProviderSwitchRequest(BaseModel):
-    provider: str
-
-class MessageResponse(BaseModel):
-    message: str

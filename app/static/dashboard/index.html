@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empire Monitoring Dashboard</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--dark);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 1.6rem;
+        }
+        
+        header .status {
+            display: flex;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            margin-right: 8px;
+        }
+        
+        .status-indicator.offline {
+            background-color: var(--danger);
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .card h2 {
+            margin-top: 0;
+            color: var(--dark);
+            font-size: 1.2rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .metric-label {
+            color: #666;
+        }
+        
+        .metric-value {
+            font-weight: 500;
+        }
+        
+        .metric-value.warning {
+            color: var(--warning);
+        }
+        
+        .metric-value.danger {
+            color: var(--danger);
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        
+        .progress-value {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-value.warning {
+            background-color: var(--warning);
+        }
+        
+        .progress-value.danger {
+            background-color: var(--danger);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        table th, table td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        table th {
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .status-tag {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .status-tag.active {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: var(--secondary);
+        }
+        
+        .status-tag.inactive {
+            background-color: rgba(189, 195, 199, 0.2);
+            color: #7f8c8d;
+        }
+        
+        .status-tag.error {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: var(--danger);
+        }
+        
+        .api-metrics {
+            height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Empire Monitoring Dashboard</h1>
+        <div class="status">
+            <div class="status-indicator" id="connection-status"></div>
+            <span id="connection-text">Connecting...</span>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="dashboard">
+            <!-- System Metrics -->
+            <div class="card">
+                <h2>System Metrics</h2>
+                <div class="metric">
+                    <span class="metric-label">CPU Usage</span>
+                    <span class="metric-value" id="cpu-value">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-value" id="cpu-bar"></div>
+                </div>
+                
+                <div class="metric">
+                    <span class="metric-label">Memory Usage</span>
+                    <span class="metric-value" id="memory-value">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-value" id="memory-bar"></div>
+                </div>
+                
+                <div class="metric">
+                    <span class="metric-label">Disk Usage</span>
+                    <span class="metric-value" id="disk-value">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-value" id="disk-bar"></div>
+                </div>
+                
+                <div class="metric">
+                    <span class="metric-label">Processes</span>
+                    <span class="metric-value" id="processes-value">0</span>
+                </div>
+                
+                <div class="metric">
+                    <span class="metric-label">Uptime</span>
+                    <span class="metric-value" id="uptime-value">0:00:00</span>
+                </div>
+            </div>
+            
+            <!-- Agent Status -->
+            <div class="card">
+                <h2>Agent Status</h2>
+                <table id="agent-table">
+                    <thead>
+                        <tr>
+                            <th>Agent</th>
+                            <th>Status</th>
+                            <th>Tasks</th>
+                            <th>Avg Response</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Will be populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- API Endpoint Usage -->
+            <div class="card">
+                <h2>API Endpoint Usage</h2>
+                <div class="api-metrics">
+                    <table id="api-table">
+                        <thead>
+                            <tr>
+                                <th>Endpoint</th>
+                                <th>Requests</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Will be populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // WebSocket connection to get real-time updates
+        let socket;
+        let reconnectAttempts = 0;
+        const maxReconnectAttempts = 5;
+        const reconnectDelay = 2000; // 2 seconds
+        
+        // Connect to WebSocket
+        function connectWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsURL = `${protocol}//${window.location.host}/monitoring/ws`;
+            
+            socket = new WebSocket(wsURL);
+            
+            socket.onopen = function() {
+                console.log('WebSocket connected');
+                document.getElementById('connection-status').classList.remove('offline');
+                document.getElementById('connection-text').textContent = 'Connected';
+                reconnectAttempts = 0;
+            };
+            
+            socket.onmessage = function(event) {
+                try {
+                    const data = JSON.parse(event.data);
+                    updateDashboard(data);
+                } catch (error) {
+                    console.error('Error parsing WebSocket message:', error);
+                }
+            };
+            
+            socket.onclose = function() {
+                document.getElementById('connection-status').classList.add('offline');
+                document.getElementById('connection-text').textContent = 'Disconnected';
+                
+                // Attempt to reconnect
+                if (reconnectAttempts < maxReconnectAttempts) {
+                    reconnectAttempts++;
+                    document.getElementById('connection-text').textContent = `Reconnecting (${reconnectAttempts}/${maxReconnectAttempts})...`;
+                    setTimeout(connectWebSocket, reconnectDelay);
+                } else {
+                    document.getElementById('connection-text').textContent = 'Connection failed';
+                }
+            };
+            
+            socket.onerror = function(error) {
+                console.error('WebSocket error:', error);
+            };
+        }
+        
+        // Update the dashboard with monitoring data
+        function updateDashboard(data) {
+            // Update system metrics
+            updateSystemMetrics(data.system);
+            
+            // Update agent status
+            updateAgentStatus(data.agents);
+            
+            // Update API usage
+            updateApiUsage(data.api_requests);
+        }
+        
+        // Update system metrics
+        function updateSystemMetrics(system) {
+            // CPU usage
+            const cpuValue = document.getElementById('cpu-value');
+            const cpuBar = document.getElementById('cpu-bar');
+            cpuValue.textContent = `${system.cpu_percent.toFixed(1)}%`;
+            cpuBar.style.width = `${system.cpu_percent}%`;
+            
+            // Apply warning/danger classes based on thresholds
+            if (system.cpu_percent > 90) {
+                cpuValue.className = 'metric-value danger';
+                cpuBar.className = 'progress-value danger';
+            } else if (system.cpu_percent > 70) {
+                cpuValue.className = 'metric-value warning';
+                cpuBar.className = 'progress-value warning';
+            } else {
+                cpuValue.className = 'metric-value';
+                cpuBar.className = 'progress-value';
+            }
+            
+            // Memory usage
+            const memoryValue = document.getElementById('memory-value');
+            const memoryBar = document.getElementById('memory-bar');
+            memoryValue.textContent = `${system.memory_percent.toFixed(1)}%`;
+            memoryBar.style.width = `${system.memory_percent}%`;
+            
+            if (system.memory_percent > 90) {
+                memoryValue.className = 'metric-value danger';
+                memoryBar.className = 'progress-value danger';
+            } else if (system.memory_percent > 70) {
+                memoryValue.className = 'metric-value warning';
+                memoryBar.className = 'progress-value warning';
+            } else {
+                memoryValue.className = 'metric-value';
+                memoryBar.className = 'progress-value';
+            }
+            
+            // Disk usage
+            const diskValue = document.getElementById('disk-value');
+            const diskBar = document.getElementById('disk-bar');
+            diskValue.textContent = `${system.disk_percent.toFixed(1)}%`;
+            diskBar.style.width = `${system.disk_percent}%`;
+            
+            if (system.disk_percent > 90) {
+                diskValue.className = 'metric-value danger';
+                diskBar.className = 'progress-value danger';
+            } else if (system.disk_percent > 70) {
+                diskValue.className = 'metric-value warning';
+                diskBar.className = 'progress-value warning';
+            } else {
+                diskValue.className = 'metric-value';
+                diskBar.className = 'progress-value';
+            }
+            
+            // Processes
+            document.getElementById('processes-value').textContent = system.process_count;
+            
+            // Uptime
+            const uptime = formatUptime(system.uptime_seconds);
+            document.getElementById('uptime-value').textContent = uptime;
+        }
+        
+        // Update agent status
+        function updateAgentStatus(agents) {
+            const table = document.getElementById('agent-table').getElementsByTagName('tbody')[0];
+            table.innerHTML = ''; // Clear current rows
+            
+            if (agents.length === 0) {
+                const row = table.insertRow();
+                const cell = row.insertCell();
+                cell.colSpan = 4;
+                cell.textContent = 'No agents registered';
+                cell.style.textAlign = 'center';
+                cell.style.padding = '20px';
+                return;
+            }
+            
+            agents.forEach(agent => {
+                const row = table.insertRow();
+                
+                // Agent name
+                const nameCell = row.insertCell();
+                nameCell.textContent = agent.name;
+                
+                // Status
+                const statusCell = row.insertCell();
+                const statusTag = document.createElement('span');
+                statusTag.className = `status-tag ${agent.status.toLowerCase()}`;
+                statusTag.textContent = agent.status;
+                statusCell.appendChild(statusTag);
+                
+                // Tasks
+                const tasksCell = row.insertCell();
+                tasksCell.textContent = `${agent.tasks_completed} / ${agent.tasks_failed + agent.tasks_completed}`;
+                
+                // Avg response time
+                const respCell = row.insertCell();
+                respCell.textContent = `${agent.avg_response_time.toFixed(2)}ms`;
+            });
+        }
+        
+        // Update API usage
+        function updateApiUsage(apiRequests) {
+            const table = document.getElementById('api-table').getElementsByTagName('tbody')[0];
+            table.innerHTML = ''; // Clear current rows
+            
+            // Convert to array of [endpoint, count] for sorting
+            const endpoints = Object.entries(apiRequests);
+            
+            // Sort by count (descending)
+            endpoints.sort((a, b) => b[1] - a[1]);
+            
+            if (endpoints.length === 0) {
+                const row = table.insertRow();
+                const cell = row.insertCell();
+                cell.colSpan = 2;
+                cell.textContent = 'No API requests recorded';
+                cell.style.textAlign = 'center';
+                cell.style.padding = '20px';
+                return;
+            }
+            
+            endpoints.forEach(([endpoint, count]) => {
+                const row = table.insertRow();
+                
+                // Endpoint
+                const endpointCell = row.insertCell();
+                endpointCell.textContent = endpoint;
+                
+                // Count
+                const countCell = row.insertCell();
+                countCell.textContent = count;
+            });
+        }
+        
+        // Format uptime in HH:MM:SS format
+        function formatUptime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            
+            return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Connect WebSocket
+            connectWebSocket();
+            
+            // Fetch initial data via HTTP (in case WebSocket connection fails)
+            fetch('/monitoring/metrics')
+                .then(response => response.json())
+                .then(data => {
+                    updateDashboard(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching initial data:', error);
+                });
+        });
+    </script>
+</body>
+</html>

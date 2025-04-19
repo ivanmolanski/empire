@@ -1,4 +1,5 @@
-- Using Pydantic v2 for all data models.
-- Models are generated from openapi.yaml using datamodel-code-generator.
-- Keep models in sync with OpenAPI spec by regenerating after changes.
-- FastAPI server structure: modular routes, root endpoint returns welcome message.
+- System architecture: FastAPI-based microservices with modular routes.
+- Using Pydantic v2 for data modeling.
+- Memory management: empire.json and empire2.json reviewed, no code changes made.
+- Communication: Claude Dev MCP protocol with custom tools.
+- Deployment: Local development environment with Uvicorn and Python 3.12.
