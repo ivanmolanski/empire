@@ -1,21 +1,38 @@
-import os
-
-# Define the project root directory
-project_root = r"C:\bach\empire"  # Use raw string to handle backslashes
-
-# Define the .gitignore content
-gitignore = """\
-pycache/
+# Python
+__pycache__/
 *.pyc
+*.pyo
+*.pyd
+.python-version
+
+# Environment
 .env
 .venv/
-*.log
-*.sqlite3
-.mypy_cache/
+
+# IDE/Editor
 .vscode/
 .idea/
-"""
+.mypy_cache/
 
-# Write the .gitignore file
-with open(os.path.join(project_root, ".gitignore"), "w") as f:
-    f.write(gitignore.strip())
+# Build artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Logs
+*.log
+logs/
+
+# Database
+*.sqlite3
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Project specific ignores requested
+.roo/
+CGo/
+memory-bank/
+update_memory_bank_from_chats.py
